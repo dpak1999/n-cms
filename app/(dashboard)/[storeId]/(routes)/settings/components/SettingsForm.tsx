@@ -1,6 +1,7 @@
 "use client";
 
 import { Store } from ".prisma/client";
+import AlertModal from "@/components/modals/AlertModal";
 import Heading from "@/components/ui/Heading";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,9 +15,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import { Trash } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import * as z from "zod";
 
 interface SettingsFormProps {
@@ -32,6 +36,8 @@ type SettingsFormValues = z.infer<typeof formSchema>;
 const SettingsForm: FC<SettingsFormProps> = ({ store }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const params = useParams();
+  const router = useRouter();
 
   const form = useForm<SettingsFormValues>({
     resolver: zodResolver(formSchema),
@@ -39,14 +45,47 @@ const SettingsForm: FC<SettingsFormProps> = ({ store }) => {
   });
 
   const onSubmit = async (data: SettingsFormValues) => {
-    console.log(data);
+    try {
+      setLoading(true);
+      await axios.patch(`/api/stores/${params.storeId}`, data);
+      router.refresh();
+      toast.success("Store updated successfully");
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onDelete = async () => {
+    try {
+      setLoading(true);
+      await axios.delete(`/api/stores/${params.storeId}`);
+      router.refresh();
+      router.push("/");
+      toast.success("Store deleted successfully");
+    } catch (error) {
+      toast.error("Make sure you have removed all products & categories.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <>
+      <AlertModal
+        isOpen={open}
+        loading={loading}
+        onClose={() => setOpen(false)}
+        onConfirm={onDelete}
+      />
       <div className="flex items-center justify-between">
         <Heading title="Settings" description="Manage your store" />
-        <Button variant={"destructive"} size={"sm"} onClick={() => {}}>
+        <Button
+          variant={"destructive"}
+          size={"sm"}
+          onClick={() => setOpen(true)}
+        >
           <Trash className="h-4 w-4" />
         </Button>
       </div>
