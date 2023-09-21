@@ -2,6 +2,7 @@
 
 import { Store } from ".prisma/client";
 import AlertModal from "@/components/modals/AlertModal";
+import ApiAlert from "@/components/ui/ApiAlert";
 import Heading from "@/components/ui/Heading";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { useOrigin } from "@/hooks/use-origin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { Trash } from "lucide-react";
@@ -38,6 +40,7 @@ const SettingsForm: FC<SettingsFormProps> = ({ store }) => {
   const [loading, setLoading] = useState(false);
   const params = useParams();
   const router = useRouter();
+  const origin = useOrigin();
 
   const form = useForm<SettingsFormValues>({
     resolver: zodResolver(formSchema),
@@ -119,6 +122,12 @@ const SettingsForm: FC<SettingsFormProps> = ({ store }) => {
           </Button>
         </form>
       </Form>
+      <Separator />
+      <ApiAlert
+        description={`${origin}/api/${params.storeId}`}
+        title="NEXT_PUBLIC_API_URL"
+        variant="public"
+      />
     </>
   );
 };
