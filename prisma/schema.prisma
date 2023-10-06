@@ -6,9 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider     = "cockroachdb"
-  relationMode = "prisma"
-  url          = env("DATABASE_URL")
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
 }
 
 model Store {
@@ -18,6 +17,7 @@ model Store {
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
   billboards Billboard[] @relation("StoreToBillboard")
+  Category   Category[]
 }
 
 model Billboard {
@@ -28,8 +28,24 @@ model Billboard {
 
   store Store @relation("StoreToBillboard", fields: [storeId], references: [id])
 
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Category  Category[]
+
+  @@index([storeId])
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  storeId     String
+  store       Store     @relation(fields: [storeId], references: [id])
+  billboardId String
+  billboard   Billboard @relation(fields: [billboardId], references: [id])
+  name        String
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([storeId])
+  @@index([billboardId])
 }
