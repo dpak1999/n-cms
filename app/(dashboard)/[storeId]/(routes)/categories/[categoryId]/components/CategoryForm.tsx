@@ -57,7 +57,7 @@ const CategoryForm: FC<CategoryFormProps> = ({ category, billboards }) => {
 
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: "", billboardId: "" },
+    defaultValues: category || { name: "", billboardId: "" },
   });
 
   const onSubmit = async (data: CategoryFormValues) => {

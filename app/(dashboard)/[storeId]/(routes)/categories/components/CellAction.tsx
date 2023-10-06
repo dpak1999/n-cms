@@ -34,13 +34,13 @@ const CellAction: FC<CellActionProps> = ({ data }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/billboards/${data.id}`);
+      await axios.delete(`/api/${params.storeId}/categories/${data.id}`);
       router.refresh();
-      router.push(`/${params.storeId}/billboards`);
-      toast.success("Billboard deleted successfully");
+      router.push(`/${params.storeId}/categories`);
+      toast.success("Category deleted successfully");
     } catch (error) {
       toast.error(
-        "Make sure you have removed all categories using this billboard."
+        "Make sure you have removed all products using this category."
       );
     } finally {
       setLoading(false);
@@ -68,7 +68,7 @@ const CellAction: FC<CellActionProps> = ({ data }) => {
           <DropdownMenuItem
             className="cursor-pointer"
             onClick={() =>
-              router.push(`/${params.storeId}/billboards/${data.id}`)
+              router.push(`/${params.storeId}/categories/${data.id}`)
             }
           >
             <Edit className="h-4 w-4 mr-2" />
